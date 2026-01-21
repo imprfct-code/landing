@@ -1,16 +1,17 @@
 ---
-
+import "../styles/global.css";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<div class="min-h-screen flex flex-col items-center justify-center gap-6">
+    <h1 class="text-4xl text-primary font-bold">imprfct landing</h1>
+
+    <div class="p-8 bg-surface rounded-2xl border border-border shadow-xl">
+        <p class="text-text-muted font-mono">system status: operational</p>
+    </div>
+
+    <button
+        class="px-6 py-2 bg-primary text-white rounded-xl hover:opacity-90 transition-flow"
+    >
+        Start Engine
+    </button>
+</div>
