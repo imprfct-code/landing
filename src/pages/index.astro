@@ -2,16 +2,162 @@
 import "../styles/global.css";
 ---
 
-<div class="min-h-screen flex flex-col items-center justify-center gap-6">
-    <h1 class="text-4xl text-primary font-bold">imprfct landing</h1>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="I make mobile games for iOS and Android. One-person studio, open to offers and collaborations."
+    />
+    <meta property="og:title" content="imprfct games" />
+    <meta
+      property="og:description"
+      content="I make mobile games for iOS and Android. One-person studio, open to offers and collaborations."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="/og.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" sizes="any" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>imprfct games</title>
+    <script is:inline>
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.documentElement.dataset.splash = "pending";
+      }
+    </script>
+  </head>
+  <body class="overflow-x-hidden">
+    <div class="splash-glow pointer-events-none fixed inset-0" aria-hidden="true"></div>
 
-    <div class="p-8 bg-surface rounded-2xl border border-border shadow-xl">
-        <p class="text-text-muted font-mono">system status: operational</p>
-    </div>
+    <main class="relative mx-auto flex min-h-dvh max-w-[520px] flex-col justify-center px-6 py-16">
+      <h1 class="sr-only">imprfct games</h1>
 
-    <button
-        class="px-6 py-2 bg-primary text-white rounded-xl hover:opacity-90 transition-flow"
-    >
-        Start Engine
-    </button>
-</div>
+      <button
+        type="button"
+        data-logo-replay
+        aria-label="imprfct games"
+        class="logo-anchor block w-[220px] max-w-full border-0 bg-transparent p-0 text-left focus-visible:outline-none sm:w-[250px]"
+      >
+        <svg
+          data-splash-logo
+          viewBox="2.74 13.52 612.37 124.88"
+          class="block h-auto w-full overflow-visible select-none"
+          role="img"
+          aria-label="imprfct games"
+        ></svg>
+        <noscript>
+          <img
+            src="/logo.svg"
+            alt="imprfct games"
+            width="612"
+            height="125"
+            class="block h-auto w-full select-none"
+          />
+        </noscript>
+      </button>
+
+      <div class="splash-reveal mt-10 flex flex-col gap-7">
+        <div class="flex flex-col gap-1 border-t border-border pt-7 text-sm leading-6">
+          <p class="text-foreground">I make mobile games for iOS and Android.</p>
+          <p class="text-muted-foreground">
+            One-person studio, open to offers and collaborations.
+          </p>
+        </div>
+
+        <ul class="m-0 list-none divide-y divide-border border-y border-border p-0 text-xs">
+          <li>
+            <button
+              type="button"
+              data-copy="hello@imprfct.dev"
+              class="group flex w-full items-center justify-between gap-4 border-0 bg-transparent py-3 text-left transition-colors duration-150 focus-visible:outline-none"
+            >
+              <span class="flex items-center gap-2.5 text-muted-foreground transition-colors duration-150 group-hover:text-foreground group-focus-visible:text-foreground">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.75"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="size-3.5 shrink-0"
+                  aria-hidden="true"
+                >
+                  <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                </svg>
+                <span>Email</span>
+              </span>
+              <span
+                data-copy-label
+                class="text-foreground transition-colors duration-150 group-hover:text-accent group-focus-visible:text-accent"
+              >
+                hello@imprfct.dev
+              </span>
+            </button>
+          </li>
+          <li>
+            <a
+              href="https://x.com/imprfct_dev"
+              target="_blank"
+              rel="noreferrer"
+              class="group flex w-full items-center justify-between gap-4 py-3 transition-colors duration-150 focus-visible:outline-none"
+            >
+              <span class="flex items-center gap-2.5 text-muted-foreground transition-colors duration-150 group-hover:text-foreground group-focus-visible:text-foreground">
+                <span class="flex size-3.5 shrink-0 items-center justify-center" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor" class="size-3">
+                    <path
+                      d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                    ></path>
+                  </svg>
+                </span>
+                <span>X</span>
+              </span>
+              <span class="text-foreground transition-colors duration-150 group-hover:text-accent group-focus-visible:text-accent">
+                @imprfct_dev
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </main>
+
+    <script>
+      import { mountLogoSplash } from "../scripts/logo-splash";
+
+      const svg = document.querySelector<SVGSVGElement>("[data-splash-logo]");
+      const button = document.querySelector<HTMLButtonElement>("[data-logo-replay]");
+
+      if (svg && button) {
+        const controller = mountLogoSplash({ svg, anchor: button });
+        button.addEventListener("click", () => controller.replay());
+      }
+
+      const copyRow = document.querySelector<HTMLButtonElement>("[data-copy]");
+      const copyLabel = copyRow?.querySelector<HTMLElement>("[data-copy-label]");
+      if (copyRow && copyLabel) {
+        let timer = 0;
+        copyRow.addEventListener("click", async () => {
+          const value = copyRow.dataset.copy ?? "";
+          try {
+            await navigator.clipboard.writeText(value);
+            copyLabel.textContent = "copied";
+            copyLabel.classList.add("text-accent");
+            window.clearTimeout(timer);
+            timer = window.setTimeout(() => {
+              copyLabel.textContent = value;
+              copyLabel.classList.remove("text-accent");
+            }, 1400);
+          } catch {
+            window.location.href = `mailto:${value}`;
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

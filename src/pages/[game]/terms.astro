@@ -1,0 +1,135 @@
+---
+import LegalLayout from "../../layouts/LegalLayout.astro";
+import { GAMES } from "../../data/games";
+import { STUDIO_LEGAL } from "../../data/legal/studio";
+
+export function getStaticPaths() {
+  return GAMES.map((game) => ({
+    params: { game: game.slug },
+    props: { game },
+  }));
+}
+
+const { game } = Astro.props;
+const legalEntity = game.publisherOverride?.legalEntity ?? STUDIO_LEGAL.legalEntity;
+const country = game.publisherOverride?.country ?? STUDIO_LEGAL.country;
+const privacyEmail = game.publisherOverride?.privacyEmail ?? STUDIO_LEGAL.privacyEmail;
+---
+
+<LegalLayout
+  game={game}
+  activeTab="terms"
+  title={`${game.name} Terms of Use`}
+  description={`Terms of Use for ${game.name} by ${STUDIO_LEGAL.brandName}.`}
+>
+  <article class="flex flex-col gap-10">
+    <header class="flex flex-col gap-6">
+      <div class="flex flex-col gap-2">
+        <p class="text-xs text-muted-foreground">{game.name}</p>
+        <h1 class="text-xl leading-snug font-medium tracking-tight text-foreground-bright">
+          Terms of Use
+        </h1>
+      </div>
+
+      <dl class="m-0 divide-y divide-border border-y border-border text-xs">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-2.5">
+          <dt class="text-muted-foreground">Publisher</dt>
+          <dd class="text-foreground">{legalEntity} ({country})</dd>
+        </div>
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-2.5">
+          <dt class="text-muted-foreground">Support</dt>
+          <dd>
+            <button
+              type="button"
+              data-copy={privacyEmail}
+              class="border-0 bg-transparent p-0 text-xs text-foreground transition-colors duration-150 hover:text-accent focus-visible:text-accent focus-visible:outline-none"
+            >
+              {privacyEmail}
+            </button>
+          </dd>
+        </div>
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-2.5">
+          <dt class="text-muted-foreground">Effective</dt>
+          <dd class="text-foreground">{game.effectiveDate}</dd>
+        </div>
+      </dl>
+    </header>
+
+    <section class="flex flex-col gap-3">
+      <h2 class="text-sm font-medium text-foreground-bright">1. Eligibility and license</h2>
+      <p class="text-[13px] leading-6 text-foreground">
+        You must be at least {game.audience.minimumAge} years old (or have permission from a parent
+        or legal guardian where required by your local law) to play {game.name}. We grant you a
+        personal, non-exclusive, non-transferable, revocable license to download and play{" "}
+        {game.name} for non-commercial entertainment on devices you own or control. On iOS, Apple's
+        Standard Licensed Application End User License Agreement applies; on Android, Google Play's
+        Terms of Service apply.
+      </p>
+    </section>
+
+    {
+      game.terms.hasPurchases && (
+        <section class="flex flex-col gap-3 border-t border-border pt-8">
+          <h2 class="text-sm font-medium text-foreground-bright">2. Virtual items and purchases</h2>
+          <p class="text-[13px] leading-6 text-foreground">
+            {game.name} offers optional in-app purchases of{" "}
+            {game.terms.purchaseItems ?? "virtual items"}. Purchased virtual currency does not
+            expire while your profile remains active. Virtual items have no real-world monetary
+            value, cannot be exchanged for cash, and cannot be transferred outside the game.
+          </p>
+          <p class="text-[13px] leading-6 text-muted-foreground">
+            Payments are processed by Google Play or Apple. To request a refund, use Google Play or
+            Apple's refund process. Nothing in these terms limits mandatory refund or consumer
+            remedies under your local law. If you request account deletion, any unused virtual
+            balances are permanently erased with your profile.
+          </p>
+        </section>
+      )
+    }
+
+    {
+      (game.terms.hasMultiplayer || game.terms.hasUserNames) && (
+        <section class="flex flex-col gap-3 border-t border-border pt-8">
+          <h2 class="text-sm font-medium text-foreground-bright">
+            {game.terms.hasPurchases ? "3." : "2."} Fair play and conduct
+          </h2>
+          <p class="text-[13px] leading-6 text-foreground">
+            Do not cheat, automate gameplay, exploit bugs, tamper with network traffic, or use
+            offensive or impersonating display names. We may reset ratings, remove offending names,
+            or restrict online access if we detect abuse.
+          </p>
+        </section>
+      )
+    }
+
+    <section class="flex flex-col gap-3 border-t border-border pt-8">
+      <h2 class="text-sm font-medium text-foreground-bright">Availability</h2>
+      <p class="text-[13px] leading-6 text-foreground">
+        We may update, balance, change, or discontinue features of {game.name} over time. The game
+        is provided on an "as is" and "as available" basis to the fullest extent permitted by law.
+        Nothing here limits statutory consumer rights that cannot be waived under your local law.
+      </p>
+    </section>
+
+    <section class="flex flex-col gap-3 border-t border-border pt-8">
+      <h2 class="text-sm font-medium text-foreground-bright">Privacy and contact</h2>
+      <p class="text-[13px] leading-6 text-foreground">
+        Our{" "}
+        <a
+          href={`/${game.slug}/privacy`}
+          class="text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-150 hover:text-accent hover:decoration-accent"
+        >
+          {game.name} Privacy Policy
+        </a>{" "}
+        explains how we handle personal data. For support or questions, contact{" "}
+        <a
+          href={`mailto:${privacyEmail}`}
+          class="text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-150 hover:text-accent hover:decoration-accent"
+        >
+          {privacyEmail}
+        </a>
+        .
+      </p>
+    </section>
+  </article>
+</LegalLayout>

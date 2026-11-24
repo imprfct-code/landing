@@ -1,0 +1,129 @@
+---
+import "../styles/global.css";
+import type { GameLegalConfig } from "../data/games/types";
+import { STUDIO_LEGAL } from "../data/legal/studio";
+
+type DocTab = "privacy" | "delete" | "terms";
+
+interface Props {
+  game: GameLegalConfig;
+  activeTab: DocTab;
+  title: string;
+  description: string;
+}
+
+const { game, activeTab, title, description } = Astro.props;
+const privacyEmail = game.publisherOverride?.privacyEmail ?? STUDIO_LEGAL.privacyEmail;
+
+const tabs: { id: DocTab; label: string; href: string }[] = [
+  { id: "privacy", label: "Privacy", href: `/${game.slug}/privacy` },
+  { id: "delete", label: "Delete", href: `/${game.slug}/delete` },
+  { id: "terms", label: "Terms", href: `/${game.slug}/terms` },
+];
+---
+
+<!doctype html>
+<html lang="en" data-splash="done">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={`${title} | ${STUDIO_LEGAL.brandName}`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" sizes="any" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>{title} | {STUDIO_LEGAL.brandName}</title>
+  </head>
+  <body class="overflow-x-hidden">
+    <div class="splash-glow pointer-events-none fixed inset-0" aria-hidden="true"></div>
+
+    <div class="relative mx-auto flex min-h-dvh max-w-[600px] flex-col px-6 py-12 sm:py-16">
+      <header class="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
+        <a
+          href="/"
+          aria-label={STUDIO_LEGAL.brandName}
+          class="group flex items-center gap-2.5 text-foreground transition-colors duration-150 hover:text-accent focus-visible:text-accent focus-visible:outline-none"
+        >
+          <img
+            src="/mark.svg"
+            alt=""
+            width="24"
+            height="24"
+            class="size-6 shrink-0 select-none"
+          />
+          <span class="text-xs text-foreground-bright transition-colors duration-150 group-hover:text-accent">
+            {STUDIO_LEGAL.brandName}
+          </span>
+        </a>
+
+        <nav aria-label="Legal documents" class="flex items-center gap-5 text-xs">
+          {
+            tabs.map((tab) => (
+              <a
+                href={tab.href}
+                aria-current={tab.id === activeTab ? "page" : undefined}
+                class:list={[
+                  "transition-colors duration-150 focus-visible:outline-none",
+                  tab.id === activeTab
+                    ? "text-accent"
+                    : "text-muted-foreground hover:text-foreground focus-visible:text-foreground",
+                ]}
+              >
+                {tab.label}
+              </a>
+            ))
+          }
+        </nav>
+      </header>
+
+      <main class="flex-1 py-10">
+        <slot />
+      </main>
+
+      <footer class="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6 text-xs text-muted-foreground">
+        <a
+          href="/"
+          class="transition-colors duration-150 hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
+        >
+          {STUDIO_LEGAL.brandName}
+        </a>
+        <button
+          type="button"
+          data-copy={privacyEmail}
+          class="border-0 bg-transparent p-0 text-xs text-muted-foreground transition-colors duration-150 hover:text-accent focus-visible:text-accent focus-visible:outline-none"
+        >
+          {privacyEmail}
+        </button>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((btn) => {
+        let timer = 0;
+        const label = btn.querySelector<HTMLElement>("[data-copy-label]") ?? btn;
+        const initial = label.textContent?.trim() ?? "";
+
+        btn.addEventListener("click", async () => {
+          const value = btn.dataset.copy ?? "";
+          try {
+            await navigator.clipboard.writeText(value);
+            label.textContent = "copied";
+            label.classList.add("text-accent");
+            window.clearTimeout(timer);
+            timer = window.setTimeout(() => {
+              label.textContent = initial || value;
+              label.classList.remove("text-accent");
+            }, 1400);
+          } catch {
+            window.location.href = `mailto:${value}`;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

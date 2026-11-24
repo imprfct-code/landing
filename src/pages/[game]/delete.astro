@@ -1,0 +1,137 @@
+---
+import LegalLayout from "../../layouts/LegalLayout.astro";
+import { GAMES } from "../../data/games";
+import { STUDIO_LEGAL } from "../../data/legal/studio";
+
+export function getStaticPaths() {
+  return GAMES.map((game) => ({
+    params: { game: game.slug },
+    props: { game },
+  }));
+}
+
+const { game } = Astro.props;
+const legalEntity = game.publisherOverride?.legalEntity ?? STUDIO_LEGAL.legalEntity;
+const country = game.publisherOverride?.country ?? STUDIO_LEGAL.country;
+const privacyEmail = game.publisherOverride?.privacyEmail ?? STUDIO_LEGAL.privacyEmail;
+const mailtoSubject = encodeURIComponent(`${game.name} account deletion`);
+const mailtoBody = encodeURIComponent(
+  `Game: ${game.name}\nPlatform (Android / iOS): \nPlayer ID, Friend Code, or store order reference (if available): \n\nPlease delete my account and associated game data.`,
+);
+---
+
+<LegalLayout
+  game={game}
+  activeTab="delete"
+  title={`${game.name} Account Deletion`}
+  description={`How to delete your ${game.name} account and game data.`}
+>
+  <article class="flex flex-col gap-10">
+    <header class="flex flex-col gap-2">
+      <p class="text-xs text-muted-foreground">{game.name}</p>
+      <h1 class="text-xl leading-snug font-medium tracking-tight text-foreground-bright">
+        Account and Data Deletion
+      </h1>
+      <p class="pt-1 text-[13px] leading-6 text-muted-foreground">
+        Published by {legalEntity} ({country}). Delete your {game.name} profile and cloud data
+        directly inside the game or by email after uninstalling.
+      </p>
+    </header>
+
+    {
+      game.deletion.inAppAvailable && game.deletion.inAppSteps && (
+        <section class="flex flex-col gap-3 border-t border-border pt-8">
+          <h2 class="text-sm font-medium text-foreground-bright">
+            1. Delete in the app (immediate)
+          </h2>
+          <p class="text-[13px] leading-6 text-foreground">{game.deletion.inAppSteps}</p>
+        </section>
+      )
+    }
+
+    <section class="flex flex-col gap-4 border-t border-border pt-8">
+      <h2 class="text-sm font-medium text-foreground-bright">
+        {game.deletion.inAppAvailable ? "2." : "1."} Request deletion by email (after uninstall)
+      </h2>
+      <p class="text-[13px] leading-6 text-foreground">{game.deletion.webInstructions}</p>
+      <p class="text-xs leading-5 text-muted-foreground">
+        We process deletion requests without undue delay and within the timeframes required by
+        applicable law (including 15 days under Belarusian Law No. 99-Z and within 1 month under
+        GDPR).
+      </p>
+
+      <ul class="m-0 list-none divide-y divide-border border-y border-border p-0 text-xs">
+        <li>
+          <a
+            href={`mailto:${privacyEmail}?subject=${mailtoSubject}&body=${mailtoBody}`}
+            class="group flex w-full items-center justify-between gap-4 py-3 transition-colors duration-150 focus-visible:outline-none"
+          >
+            <span class="text-muted-foreground transition-colors duration-150 group-hover:text-foreground">
+              Open email draft
+            </span>
+            <span class="text-foreground transition-colors duration-150 group-hover:text-accent">
+              {privacyEmail}
+            </span>
+          </a>
+        </li>
+        <li>
+          <button
+            type="button"
+            data-copy={privacyEmail}
+            class="group flex w-full items-center justify-between gap-4 border-0 bg-transparent py-3 text-left transition-colors duration-150 focus-visible:outline-none"
+          >
+            <span class="text-muted-foreground transition-colors duration-150 group-hover:text-foreground">
+              Copy address
+            </span>
+            <span
+              data-copy-label
+              class="text-foreground transition-colors duration-150 group-hover:text-accent"
+            >
+              {privacyEmail}
+            </span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="flex flex-col gap-2 pt-1">
+        <p class="text-xs text-muted-foreground">Verification notes</p>
+        <ul class="m-0 flex list-disc flex-col gap-1.5 pl-5 text-xs leading-5 text-muted-foreground">
+          {game.deletion.verificationDetails.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </section>
+
+    <section class="flex flex-col gap-3 border-t border-border pt-8">
+      <h2 class="text-sm font-medium text-foreground-bright">
+        {game.deletion.inAppAvailable ? "3." : "2."} What is deleted
+      </h2>
+      <p class="text-[13px] leading-6 text-muted-foreground">
+        Once processed, our backend erases your private player storage and links:
+      </p>
+      <ul class="m-0 flex list-disc flex-col gap-2 pl-5 text-[13px] leading-6 text-foreground">
+        {game.deletion.erasedImmediately.map((item) => <li>{item}</li>)}
+      </ul>
+      <p class="text-xs leading-5 text-muted-foreground">
+        If you request deletion by email while the game is still installed, also clear app storage
+        or uninstall it so local save files are removed from your device.
+      </p>
+    </section>
+
+    <section class="flex flex-col gap-4 border-t border-border pt-8">
+      <h2 class="text-sm font-medium text-foreground-bright">
+        {game.deletion.inAppAvailable ? "4." : "3."} What is retained and for how long
+      </h2>
+      <div class="flex flex-col divide-y divide-border border-y border-border">
+        {
+          game.deletion.retainedItems.map((entry) => (
+            <div class="flex flex-col gap-1.5 py-4">
+              <p class="m-0 text-xs font-medium text-foreground-bright">{entry.item}</p>
+              <p class="m-0 text-xs leading-5 text-foreground">{entry.reason}</p>
+              <p class="m-0 text-xs text-muted-foreground">Retention: {entry.period}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </article>
+</LegalLayout>

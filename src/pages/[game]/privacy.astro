@@ -1,0 +1,296 @@
+---
+import LegalLayout from "../../layouts/LegalLayout.astro";
+import { GAMES } from "../../data/games";
+import { PROCESSORS } from "../../data/legal/processors";
+import { STUDIO_LEGAL } from "../../data/legal/studio";
+
+export function getStaticPaths() {
+  return GAMES.map((game) => ({
+    params: { game: game.slug },
+    props: { game },
+  }));
+}
+
+const { game } = Astro.props;
+const legalEntity = game.publisherOverride?.legalEntity ?? STUDIO_LEGAL.legalEntity;
+const country = game.publisherOverride?.country ?? STUDIO_LEGAL.country;
+const privacyEmail = game.publisherOverride?.privacyEmail ?? STUDIO_LEGAL.privacyEmail;
+
+const androidId = game.platforms.android?.packageId;
+const iosId = game.platforms.ios?.bundleId;
+const packageIds =
+  androidId && iosId && androidId === iosId
+    ? [`${androidId} (Android, iOS)`]
+    : [
+        androidId ? `Android ${androidId}` : null,
+        iosId ? `iOS ${iosId}` : null,
+      ].filter(Boolean);
+---
+
+<LegalLayout
+  game={game}
+  activeTab="privacy"
+  title={`${game.name} Privacy Policy`}
+  description={`Privacy Policy for ${game.name} by ${STUDIO_LEGAL.brandName}.`}
+>
+  <article class="flex flex-col gap-10">
+    <header class="flex flex-col gap-6">
+      <div class="flex flex-col gap-2">
+        <p class="text-xs text-muted-foreground">{game.name}</p>
+        <h1 class="text-xl leading-snug font-medium tracking-tight text-foreground-bright">
+          Privacy Policy
+        </h1>
+      </div>
+
+      <dl class="m-0 divide-y divide-border border-y border-border text-xs">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-2.5">
+          <dt class="text-muted-foreground">Publisher</dt>
+          <dd class="text-foreground">{legalEntity}</dd>
+        </div>
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-2.5">
+          <dt class="text-muted-foreground">Country</dt>
+          <dd class="text-foreground">{country}</dd>
+        </div>
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-2.5">
+          <dt class="text-muted-foreground">Email</dt>
+          <dd>
+            <button
+              type="button"
+              data-copy={privacyEmail}
+              class="border-0 bg-transparent p-0 text-xs text-foreground transition-colors duration-150 hover:text-accent focus-visible:text-accent focus-visible:outline-none"
+            >
+              {privacyEmail}
+            </button>
+          </dd>
+        </div>
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-2.5">
+          <dt class="text-muted-foreground">App IDs</dt>
+          <dd class="flex flex-wrap justify-end gap-x-4 gap-y-1 text-right text-foreground">
+            {packageIds.map((id) => <span>{id}</span>)}
+          </dd>
+        </div>
+        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-2.5">
+          <dt class="text-muted-foreground">Effective</dt>
+          <dd class="text-foreground">{game.effectiveDate}</dd>
+        </div>
+      </dl>
+    </header>
+
+    <section class="flex flex-col gap-3">
+      <h2 class="text-sm font-medium text-foreground-bright">1. Who is responsible</h2>
+      <p class="text-[13px] leading-6 text-foreground">
+        {game.name} is published by an {STUDIO_LEGAL.legalRole}, based in {country}.{" "}
+        {legalEntity} is the data controller (operator) responsible for personal data processed when
+        you install or play {game.name}. Contact us at{" "}
+        <a
+          href={`mailto:${privacyEmail}`}
+          class="text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-150 hover:text-accent hover:decoration-accent"
+        >
+          {privacyEmail}
+        </a>
+        .
+      </p>
+    </section>
+
+    <section class="flex flex-col gap-5 border-t border-border pt-8">
+      <div class="flex flex-col gap-2">
+        <h2 class="text-sm font-medium text-foreground-bright">2. What data we process and why</h2>
+        <p class="text-[13px] leading-6 text-muted-foreground">
+          Core sign-in, gameplay, purchases, analytics, diagnostics, and install measurement are
+          listed separately below. Guest sign-in and save data are required for online features;
+          optional purchases are not required to play.
+        </p>
+      </div>
+
+      <div class="flex flex-col divide-y divide-border border-y border-border">
+        {
+          game.dataCategories.map((row) => (
+            <div class="flex flex-col gap-3 py-5">
+              <h3 class="text-[13px] font-medium text-foreground-bright">{row.category}</h3>
+              <dl class="m-0 grid gap-x-5 gap-y-2 text-xs sm:grid-cols-[108px_minmax(0,1fr)]">
+                <dt class="text-muted-foreground">Data</dt>
+                <dd class="leading-5 text-foreground">{row.examples}</dd>
+
+                <dt class="text-muted-foreground">Purpose</dt>
+                <dd class="leading-5 text-foreground">{row.purpose}</dd>
+
+                <dt class="text-muted-foreground">Lawful basis</dt>
+                <dd class="leading-5 text-muted-foreground">{row.lawfulBasis}</dd>
+
+                <dt class="text-muted-foreground">Recipients</dt>
+                <dd class="leading-5 text-muted-foreground">{row.recipients}</dd>
+
+                <dt class="text-muted-foreground">Retention</dt>
+                <dd class="leading-5 text-muted-foreground">{row.retention}</dd>
+              </dl>
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="text-xs leading-5 text-muted-foreground">
+        Data sources: most data comes directly from your device and gameplay. We also receive
+        transaction status notifications from Google Play and Apple when you make a purchase, and
+        IP-derived country codes from Cloudflare. We do not use automated decision-making that
+        produces legal or similarly significant effects.
+      </p>
+    </section>
+
+    <section class="flex flex-col gap-5 border-t border-border pt-8">
+      <div class="flex flex-col gap-2">
+        <h2 class="text-sm font-medium text-foreground-bright">
+          3. Infrastructure and third-party partners
+        </h2>
+        <p class="text-[13px] leading-6 text-muted-foreground">
+          We do not sell your personal data for money. Data is processed only by the infrastructure
+          hosts, store operators, and SDK partners listed below on the platforms where each
+          integration is active.
+        </p>
+      </div>
+
+      <ul class="m-0 list-none divide-y divide-border border-y border-border p-0 text-xs">
+        {
+          game.processors.map((entry) => {
+            const info = PROCESSORS[entry.id];
+            return (
+              <li class="flex flex-col gap-2 py-4">
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                  <span class="font-medium text-foreground-bright">{info.name}</span>
+                  <span class="text-[11px] text-muted-foreground">{entry.platforms}</span>
+                </div>
+                <p class="m-0 leading-5 text-foreground">{info.role}.</p>
+                <p class="m-0 leading-5 text-muted-foreground">{info.dataProcessed}.</p>
+                {entry.note && <p class="m-0 leading-5 text-muted-foreground">{entry.note}</p>}
+                <div class="pt-0.5">
+                  <a
+                    href={info.policyUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    class="text-muted-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-150 hover:text-accent hover:decoration-accent"
+                  >
+                    {info.policyLabel}
+                  </a>
+                </div>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </section>
+
+    <section class="flex flex-col gap-3 border-t border-border pt-8">
+      <h2 class="text-sm font-medium text-foreground-bright">
+        4. Security and international data transfers
+      </h2>
+      <p class="text-[13px] leading-6 text-foreground">
+        All traffic between {game.name} and our backend is encrypted in transit over HTTPS/TLS.
+        Guest sign-in credentials are hashed before storage, administrative access is token-scoped,
+        and our infrastructure and SDK partners are required to protect data under their contractual
+        and published privacy terms.
+      </p>
+      <p class="text-[13px] leading-6 text-muted-foreground">
+        {legalEntity} accesses operational and support data from {country}, which does not have an
+        EU or UK adequacy decision. Our backend runs on Cloudflare's global edge network, and our
+        store, analytics, and attribution partners process data outside the EEA and UK, including in
+        the United States. Where cross-border transfer rules apply, transfers rely on applicable
+        contractual safeguards (such as processor Standard Contractual Clauses) or statutory
+        derogations where necessary to perform the game service. Email{" "}
+        <a
+          href={`mailto:${privacyEmail}`}
+          class="text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-150 hover:text-accent hover:decoration-accent"
+        >
+          {privacyEmail}
+        </a>{" "}
+        to request information about the safeguards used for your data.
+      </p>
+    </section>
+
+    <section class="flex flex-col gap-3 border-t border-border pt-8">
+      <h2 class="text-sm font-medium text-foreground-bright">5. Consent and controls</h2>
+      <p class="text-[13px] leading-6 text-foreground">{game.consentControls.description}</p>
+      <p class="text-xs leading-5 text-muted-foreground">
+        In-app path: <span class="text-foreground">{game.consentControls.inAppPath}</span>.
+        Withdrawing consent does not affect processing carried out before withdrawal.
+      </p>
+    </section>
+
+    <section class="flex flex-col gap-3 border-t border-border pt-8">
+      <h2 class="text-sm font-medium text-foreground-bright">6. Your rights</h2>
+      <p class="text-[13px] leading-6 text-foreground">
+        Depending on where you live, you may request access to your personal data, ask us to correct
+        inaccurate data, request deletion, restrict processing, receive a portable copy of data you
+        provided, or withdraw consent at any time.
+      </p>
+      <p class="text-[13px] leading-6 text-foreground">
+        Right to object: where we process your data based on legitimate interests, you have the
+        right to object on grounds relating to your situation by emailing{" "}
+        <a
+          href={`mailto:${privacyEmail}`}
+          class="text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-150 hover:text-accent hover:decoration-accent"
+        >
+          {privacyEmail}
+        </a>
+        .
+      </p>
+      <p class="text-[13px] leading-6 text-muted-foreground">
+        We respond within the statutory deadlines under applicable law (including 5 working days for
+        access requests and 15 days for withdrawal or erasure requests where Belarus Law No. 99-Z
+        applies, and within 1 month under GDPR). You also have the right to lodge a complaint with
+        your local data protection authority in the EEA or UK, or with the{" "}
+        <a
+          href="https://cpd.by/en/"
+          target="_blank"
+          rel="noreferrer"
+          class="text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-150 hover:text-accent hover:decoration-accent"
+        >
+          National Center for Personal Data Protection of the Republic of Belarus
+        </a>
+        .
+      </p>
+    </section>
+
+    <section id="deletion" class="flex flex-col gap-3 border-t border-border pt-8">
+      <h2 class="text-sm font-medium text-foreground-bright">7. Account and data deletion</h2>
+      <p class="text-[13px] leading-6 text-foreground">
+        You can request deletion of your {game.name} profile and cloud data at any time, including
+        after uninstalling the app.
+      </p>
+      <div class="border-y border-border">
+        <a
+          href={`/${game.slug}/delete`}
+          class="group flex items-center justify-between gap-4 py-3 text-xs transition-colors duration-150 focus-visible:outline-none"
+        >
+          <span class="text-muted-foreground transition-colors duration-150 group-hover:text-foreground">
+            Deletion instructions
+          </span>
+          <span class="text-foreground transition-colors duration-150 group-hover:text-accent">
+            /{game.slug}/delete
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <section class="flex flex-col gap-3 border-t border-border pt-8">
+      <h2 class="text-sm font-medium text-foreground-bright">8. Children</h2>
+      <p class="text-[13px] leading-6 text-foreground">{game.audience.note}</p>
+      <p class="text-[13px] leading-6 text-muted-foreground">
+        If a child under the applicable age has shared personal data through {game.name}, email{" "}
+        <a
+          href={`mailto:${privacyEmail}`}
+          class="text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-150 hover:text-accent hover:decoration-accent"
+        >
+          {privacyEmail}
+        </a>{" "}
+        and we will delete the profile.
+      </p>
+    </section>
+
+    <section class="flex flex-col gap-3 border-t border-border pt-8">
+      <h2 class="text-sm font-medium text-foreground-bright">9. Updates</h2>
+      <p class="text-[13px] leading-6 text-foreground">
+        We may update this policy when the game's features, SDKs, or legal requirements change. The
+        effective date at the top reflects the current version.
+      </p>
+    </section>
+  </article>
+</LegalLayout>
