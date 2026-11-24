@@ -19,7 +19,7 @@ Studio-wide defaults live in `src/data/legal/studio.ts`.
 
 Completed in code:
 - `imprfct-gg` `main` (`7c49b79445612662688aa382650491ebef55bccb`): Unity SDK consent gating (`RequireTelemetryConsent`, `SetTelemetryConsent`), `410 player_deleted` rejection on `POST /v1/events`, `LiveObject` erasure on account deletion, and 7-day analytics catalog snapshot expiry in provisioning.
-- `cap-duel` (`27cea91941d6602ad7e872449171cd5485282e49`): pinned `com.imprfct.gg`, fixed TinySauce consent flags and 5s timeout fail-closed defaults, wired `gg` + Adjust + GameAnalytics + Voodoo consent and withdrawal on Android and iOS, removed Meta SDK and dependencies, aligned both mobile IDs to `com.imprfct.capduel`, added `Home > Settings > Delete Account` and `Home > Settings > Privacy Policy` across all 6 languages.
+- `cap-duel` (`edc394e1`): pinned `com.imprfct.gg`, fixed startup `LifetimeScope` registration, shows first-launch consent dialog right after splash on both Android (without server region lookup) and iOS, wired `gg` + Adjust + GameAnalytics + Voodoo consent and withdrawal, removed Meta SDK and dependencies, aligned both mobile IDs to `com.imprfct.capduel`, added `Home > Settings > Delete Account` and `Home > Settings > Privacy Policy` across all 6 languages.
 
 Remaining steps before sending builds to players:
 1. Deploy `landing` so `https://imprfct.dev/cap-duel/privacy`, `/cap-duel/delete`, and `/cap-duel/terms` return HTTP 200 publicly.

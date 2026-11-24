@@ -18,7 +18,7 @@ export const capDuel: GameLegalConfig = {
   consentControls: {
     inAppPath: "Home > Settings > Privacy (Android) and Home > Settings > Analytics & Diagnostics (iOS)",
     description:
-      "Optional gameplay analytics and crash diagnostics are off by default until you enable them, including if a region consent check fails or times out. On Android, install measurement (Adjust) is a separate choice that starts only with attribution consent and disables tracking and third-party sharing when turned off. You can change or withdraw your choices at any time in Settings without affecting core gameplay, cloud saves, multiplayer, or purchases.",
+      "On first launch after the splash screen, Cap Duel asks for your choice before enabling optional gameplay analytics and crash diagnostics. Both stay off by default until you enable them. On Android, install measurement (Adjust) is a separate choice that starts only with attribution consent and disables tracking and third-party sharing when turned off. You can change or withdraw your choices at any time in Settings without affecting core gameplay, cloud saves, multiplayer, or purchases.",
   },
   dataCategories: [
     {

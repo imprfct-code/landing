@@ -47,9 +47,9 @@ export const PROCESSORS: Record<ProcessorId, ProcessorInfo> = {
   "voodoo-tinysauce": {
     id: "voodoo-tinysauce",
     name: "Voodoo (TinySauce and Voodoo Analytics)",
-    role: "Consent region check and gameplay/performance analytics on Android",
+    role: "In-app privacy dialog and gameplay/performance analytics on Android",
     dataProcessed:
-      "Generated analytics user ID, session and gameplay events, device/OS metadata, and IP-derived region for consent checks",
+      "Generated analytics user ID, session and gameplay events, and device/OS metadata (only when analytics consent is enabled)",
     policyUrl: "https://www.voodoo.io/privacy",
     policyLabel: "Voodoo Privacy Policy",
   },
